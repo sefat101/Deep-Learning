@@ -1,5 +1,7 @@
 import numpy as np
 from sklearn.datasets import make_classification
+import matplotlib.pyplot as plt
+
 
 # Dataset
 X, y = make_classification(
@@ -41,3 +43,8 @@ for epoch in range(epochs):
 
 print("Weights:", w)
 print("Bias:", b)
+plt.plot(loss_history)
+plt.xlabel("Epoch")
+plt.ylabel("Perceptron Loss")
+plt.title("Training Loss")
+plt.show()
