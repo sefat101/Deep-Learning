@@ -1,6 +1,10 @@
-# ==========================================
+# ==============================================================================================================================
 # CUSTOMER CHURN PREDICTION USING ANN
-# ==========================================
+# Dataset - https://www.kaggle.com/datasets/rjmanoj/credit-card-customer-churn-prediction
+# ==============================================================================================================================
+
+#https://www.kaggle.com/datasets/rjmanoj/credit-card-customer-churn-prediction
+
 
 # Import Libraries
 import numpy as np
