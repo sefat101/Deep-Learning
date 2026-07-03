@@ -76,6 +76,9 @@ history = model.fit(
 
 y_prob = model.predict(X_test)          # shape: (10000, 10) — probabilities per class
 y_pred = y_prob.argmax(axis=1)          # pick class with highest probability
+# y_prob -> 10000 rows and 10 probabilities per row 
+# axis=0 -> move down the rows , operate column wise 
+# axis=1 -> move accross the cols and operate row wise 
 
 print("Test Accuracy:", accuracy_score(y_test, y_pred))
 
@@ -119,3 +122,6 @@ plt.show()
 
 predicted_digit = model.predict(X_test[idx].reshape(1, 28, 28)).argmax(axis=1)
 print(f"Predicted digit: {predicted_digit[0]}")
+
+#To see the image use matplotlib's imshow function 
+#plt.imshow(X_test[2])
