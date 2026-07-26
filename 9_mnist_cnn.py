@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 
@@ -27,7 +28,6 @@ plt.show()
 X_train = X_train.astype('float32') / 255.0
 X_test = X_test.astype('float32') / 255.0
 
-# Add channel dimension: (28, 28) -> (28, 28, 1)
 X_train = X_train.reshape(-1, 28, 28, 1)
 X_test = X_test.reshape(-1, 28, 28, 1)
 
@@ -61,18 +61,51 @@ model.compile(
 )
 
 # ─────────────────────────────────────────────────────────────
-# STEP 5: Train the Model
+# STEP 5: Define Callbacks
+# ─────────────────────────────────────────────────────────────
+
+# Stop training if validation loss doesn't improve
+early_stop = EarlyStopping(
+    monitor='val_loss',
+    patience=5,
+    restore_best_weights=True,
+    verbose=1
+)
+
+# Save best model to file
+checkpoint = ModelCheckpoint(
+    'best_mnist_cnn.h5',
+    monitor='val_loss',
+    save_best_only=True,
+    save_weights_only=False,
+    verbose=1
+)
+
+# Reduce learning rate if validation loss plateaus
+reduce_lr = ReduceLROnPlateau(
+    monitor='val_loss',
+    factor=0.5,
+    patience=3,
+    min_lr=1e-6,
+    verbose=1
+)
+
+callbacks = [early_stop, checkpoint, reduce_lr]
+
+# ─────────────────────────────────────────────────────────────
+# STEP 6: Train the Model
 # ─────────────────────────────────────────────────────────────
 
 history = model.fit(
     X_train, y_train,
-    epochs=10,
+    epochs=30,
     validation_split=0.2,
-    batch_size=128
+    batch_size=128,
+    callbacks=callbacks
 )
 
 # ─────────────────────────────────────────────────────────────
-# STEP 6: Evaluate on Test Set
+# STEP 7: Evaluate on Test Set
 # ─────────────────────────────────────────────────────────────
 
 y_prob = model.predict(X_test)
@@ -81,7 +114,7 @@ y_pred = y_prob.argmax(axis=1)
 print("Test Accuracy:", accuracy_score(y_test, y_pred))
 
 # ─────────────────────────────────────────────────────────────
-# STEP 7: Plot Training Curves
+# STEP 8: Plot Training Curves
 # ─────────────────────────────────────────────────────────────
 
 plt.figure(figsize=(12, 4))
@@ -106,7 +139,7 @@ plt.tight_layout()
 plt.show()
 
 # ─────────────────────────────────────────────────────────────
-# STEP 8: Predict a Single Image
+# STEP 9: Predict a Single Image
 # ─────────────────────────────────────────────────────────────
 
 idx = 1000
